@@ -1,0 +1,10 @@
+/*.container {
+  display: flex;
+  justify-content: center;
+}*/
+#gomoku {
+  display: block;
+  margin: 40px auto;
+  background-color: #ecad5b;
+  box-shadow: 0 1px 6px rgba(0,0,0,.117647), 0 1px 4px rgba(0,0,0,.117647);
+}
