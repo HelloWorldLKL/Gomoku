@@ -1,5 +1,7 @@
 var gomoku = document.querySelector('#gomoku');
 var context = gomoku.getContext('2d');
+var gomokuPiece = document.querySelector('#gomoku-piece');
+var pieceContext = gomokuPiece.getContext('2d');
 var myTurn = true;
 var over = false;
 // 棋盘的数据
@@ -69,15 +71,15 @@ for (var i = 0; i < count; i++) {
 function oneStep(x, y, color) {
   if (color) {
     // true 为黑
-    context.fillStyle = '#050001';
+    pieceContext.fillStyle = '#050001';
   } else {
     // false 为白
-    context.fillStyle = '#fcfffb';
+    pieceContext.fillStyle = '#fcfffb';
   }
-  context.beginPath();
-  context.arc(28 + x * 46, 28 + y * 46, 20, 0, 2 * Math.PI);
-  context.closePath();
-  context.fill();
+  pieceContext.beginPath();
+  pieceContext.arc(28 + x * 46, 28 + y * 46, 20, 0, 2 * Math.PI);
+  pieceContext.closePath();
+  pieceContext.fill();
 }
 
 // 画棋盘
@@ -90,7 +92,7 @@ for (var i = 0; i < 15; i++) {
   context.lineTo(672, 28 + i * 46);
   context.stroke();
 }
-gomoku.onclick = function(e) {
+gomokuPiece.onclick = function(e) {
   if (over || !myTurn) {
     return;
   }
@@ -107,7 +109,8 @@ gomoku.onclick = function(e) {
         myWin[k]++;
         computerWin[k] = 6;
         if (myWin[k] === 5) {
-          window.alert('You Win');
+          $('#modal').modal('toggle');
+          $('.modal-body')[0].innerHTML = 'You Win';
           over = true;
         }
       }
@@ -189,7 +192,9 @@ function computerAi() {
       computerWin[k]++;
       myWin[k] = 6;
       if (computerWin[k] === 5) {
-        window.alert('Computer Win');
+        // window.alert('Computer Win');
+        $('.modal-body')[0].innerHTML = 'Computer Win';
+        $('#modal').modal('toggle')
         over = true;
       }
     }
@@ -197,4 +202,21 @@ function computerAi() {
   if (!over) {
     myTurn = !myTurn;
   }
+}
+
+$('#replay-btn')[0].onclick = function() {
+  for (var i = 0; i < 15; i++) {
+    board[i] = [];
+    for (var j = 0; j < 15; j++) {
+      board[i][j] = undefined;
+    }
+  }
+  for (var i = 0; i < count; i++) {
+    myWin[i] = 0;
+    computerWin[i] = 0;
+  }
+  over = false;
+  myTurn = true;
+  pieceContext.clearRect(0, 0, 700, 700);
+  $('#modal').modal('toggle');
 }
