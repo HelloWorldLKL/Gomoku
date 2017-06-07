@@ -13,8 +13,8 @@ var winMethods = [];
 // 赢法计数器
 var count = 0;
 // 赢法统计数组
-var myWin = [];
-var computerWin = [];
+var maxWin = [];
+var minWin = [];
 
 function initBoard() {
     for (var i = 0; i < 15; i++) {
@@ -74,8 +74,8 @@ function initWinMethods() {
 
 function initWinCountArr() {
     for (var i = 0; i < count; i++) {
-        myWin[i] = 0;
-        computerWin[i] = 0;
+        maxWin[i] = 0;
+        minWin[i] = 0;
     }
 }
 
@@ -133,22 +133,22 @@ function BetaGo() {
             if (board[i][j] === undefined) {
                 for (var k = 0; k < count; k++) {
                     if (winMethods[i][j][k]) {
-                        if (myWin[k] === 1) {
+                        if (maxWin[k] === 1) {
                             myScore[i][j] += 200;
-                        } else if (myWin[k] === 2) {
+                        } else if (maxWin[k] === 2) {
                             myScore[i][j] += 400;
-                        } else if (myWin[k] === 3) {
+                        } else if (maxWin[k] === 3) {
                             myScore[i][j] += 2200;
-                        } else if (myWin[k] === 4) {
+                        } else if (maxWin[k] === 4) {
                             myScore[i][j] += 10000;
                         }
-                        if (computerWin[k] === 1) {
+                        if (minWin[k] === 1) {
                             computerScore[i][j] += 400;
-                        } else if (computerWin[k] === 2) {
+                        } else if (minWin[k] === 2) {
                             computerScore[i][j] += 800;
-                        } else if (computerWin[k] === 3) {
+                        } else if (minWin[k] === 3) {
                             computerScore[i][j] += 2000;
-                        } else if (computerWin[k] === 4) {
+                        } else if (minWin[k] === 4) {
                             computerScore[i][j] += 20000;
                         }
                     }
@@ -180,9 +180,9 @@ function BetaGo() {
     board[maxX][maxY] = false;
     for (var k = 0; k < count; k++) {
         if (winMethods[maxX][maxY][k]) {
-            computerWin[k]++;
-            myWin[k] = 6;
-            if (computerWin[k] === 5) {
+            minWin[k]++;
+            maxWin[k] = 6;
+            if (minWin[k] === 5) {
                 $('.modal-body')[0].innerHTML = 'Computer Win';
                 $('#modal').modal('toggle')
                 over = true;
@@ -214,9 +214,9 @@ gomokuPiece.onclick = function(e) {
         board[i][j] = true;
         for (var k = 0; k < count; k++) {
             if (winMethods[i][j][k]) {
-                myWin[k]++;
-                computerWin[k] = 6;
-                if (myWin[k] === 5) {
+                maxWin[k]++;
+                minWin[k] = 6;
+                if (maxWin[k] === 5) {
                     $('#modal').modal('toggle');
                     $('.modal-body')[0].innerHTML = 'You Win';
                     over = true;
