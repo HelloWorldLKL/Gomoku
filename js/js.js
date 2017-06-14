@@ -118,7 +118,7 @@ function BetaGo() {
   var max = 0;
   var maxX = 0,
     maxY = 0;
-  // 初始化分数表
+  // 初始化评估数组
   for (var i = 0; i < 15; i++) {
     evaluater[i] = [];
     for (var j = 0; j < 15; j++) {
