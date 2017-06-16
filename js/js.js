@@ -16,6 +16,7 @@ var count = 0;
 var maxWin = []; //玩家
 var minWin = []; //AI
 
+// 初始化棋盘
 function initBoard() {
   for (var i = 0; i < 15; i++) {
     board[i] = [];
@@ -24,7 +25,7 @@ function initBoard() {
     }
   }
 }
-
+// 初始化赢法数组
 function initWinMethods() {
   for (var i = 0; i < 15; i++) {
     winMethods[i] = [];
@@ -71,14 +72,14 @@ function initWinMethods() {
   }
   console.log(count);
 }
-
+// 初始化赢法统计数组
 function initWinCountArr() {
   for (var i = 0; i < count; i++) {
     maxWin[i] = 0;
     minWin[i] = 0;
   }
 }
-
+// 下一步棋
 function oneStep(x, y, turn) {
   if (turn) {
     // true 为黑
@@ -92,7 +93,7 @@ function oneStep(x, y, turn) {
   pieceContext.closePath();
   pieceContext.fill();
 }
-
+// 画棋盘
 function drawChessBoard() {
   context.strokeStyle = '#401c00';
   for (var i = 0; i < 15; i++) {
@@ -104,7 +105,7 @@ function drawChessBoard() {
     context.stroke();
   }
 }
-
+// 重新开始游戏
 function replayGame() {
   initBoard();
   initWinCountArr();
@@ -112,7 +113,7 @@ function replayGame() {
   myTurn = true;
   pieceContext.clearRect(0, 0, 700, 700);
 }
-
+// AI
 function BetaGo() {
   var evaluater = [];
   var max = 0;
@@ -125,11 +126,16 @@ function BetaGo() {
       evaluater[i][j] = 0;
     }
   }
+  // 遍历棋盘
   for (var i = 0; i < 15; i++) {
     for (var j = 0; j < 15; j++) {
+      // 如果棋盘的这一点没有被下过
       if (board[i][j] === undefined) {
+        // 遍历赢法数组
         for (var k = 0; k < count; k++) {
+          // 找到该点对应的几种赢法
           if (winMethods[i][j][k]) {
+            // 开始根据赢发统计数组进行评估
             if (maxWin[k] === 1) {
               evaluater[i][j] += 200;
             } else if (maxWin[k] === 2) {
@@ -150,6 +156,7 @@ function BetaGo() {
             }
           }
         }
+        // 找最大价值的点
         if (evaluater[i][j] > max) {
           max = evaluater[i][j];
           maxX = i;
@@ -183,6 +190,7 @@ drawChessBoard();
 
 
 gomokuPiece.onclick = function(e) {
+  // 游戏结束 或者 不是我方的回合，不能下子
   if (over || !myTurn) {
     return;
   }
@@ -190,14 +198,16 @@ gomokuPiece.onclick = function(e) {
   var y = e.offsetY;
   var i = Math.floor(x / 46);
   var j = Math.floor(y / 46);
-  console.log(board[i][j]);
   if (board[i][j] === undefined) {
     oneStep(i, j, myTurn);
     board[i][j] = true;
+    // 遍历赢法数组
     for (var k = 0; k < count; k++) {
       if (winMethods[i][j][k]) {
+        // 当我方占据了一种赢法，对方就无论如何也无法实现这种赢法
         maxWin[k]++;
         minWin[k] = 6;
+        // 当我方一种赢法得到实现，我方获胜，游戏结束
         if (maxWin[k] === 5) {
           $('#modal').modal('toggle');
           $('.modal-body')[0].innerHTML = 'You Win';
@@ -205,6 +215,7 @@ gomokuPiece.onclick = function(e) {
         }
       }
     }
+    // 如果游戏没有结束，更换为AI的回合
     if (!over) {
       myTurn = !myTurn;
       BetaGo();
@@ -214,5 +225,4 @@ gomokuPiece.onclick = function(e) {
 
 $('#replay-btn')[0].onclick = function() {
   replayGame();
-  $('#modal').modal('toggle');
 }
